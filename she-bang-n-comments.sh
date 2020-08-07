@@ -3,4 +3,4 @@
 ls
 pwd
 cd/
-find .
+# find .
