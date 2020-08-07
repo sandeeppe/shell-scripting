@@ -15,4 +15,8 @@ echo -e "\e[32mIs color working"
 echo -e "\e[33mIs color working"
 echo -e "\e[34mIs color working"
 echo -e "\e[35mIs color working"
-echo -e "\e[36mIs color working" echo -e "\e[37mIs color working"
+echo -e "\e[36mIs color working" 
+echo how are you doing
+echo -e "\e[34m print this color\e[0m"
+echo think this text is printing without any color
+echo -e "\e[37mIs color working\e[0m"
