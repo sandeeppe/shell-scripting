@@ -8,3 +8,6 @@ echo practice everyday
 echo
 echo until you get a jobs 
 echo -e "hi how are you\ndoing good how about you"
+
+
+echo -e "\e[33mIs color working"
