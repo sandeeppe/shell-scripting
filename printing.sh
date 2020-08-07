@@ -6,4 +6,5 @@ echo start now
 echo
 echo practice everyday
 echo
-echo until you get a jobs
+echo until you get a jobs 
+echo -e "hi how are you\ndoing good how about you"
