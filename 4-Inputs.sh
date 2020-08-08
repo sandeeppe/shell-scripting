@@ -1,4 +1,4 @@
 #!/bin/bash
 
-name = sandeep
+name=sandeep
 echo "your name is: $name"
