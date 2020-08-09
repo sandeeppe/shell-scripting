@@ -7,10 +7,10 @@ stat(){
         
     case $1 in 
     0) 
-    echo "$2 successful"
+    echo -e "$2 -\e[32msuccessful\e[0m"
     ;;
     *)
-    echo "$2 failed"
+    echo -e "$2 -\e[31mfailed\e[0m"
     exit 1
     ;;
     esac
@@ -30,6 +30,7 @@ frontend(){
     mv localhost.conf /etc/nginx/nginx.conf
     systemctl enable nginx &>>$LOG_FILE
     systemctl start nginx &>>$LOG_FILE 
+    stat $? "start nginx"
 }
 mongodb(){
     head "Installing Mongodb service"
