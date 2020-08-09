@@ -33,10 +33,10 @@ all(){
     echo "Installing All service"
 }
 usage(){
-    echo -e "\e[33mYou are using:$0 shell\e[0m"
-    echo -e "\e[32mPlease enter any argument along with the script name
+    echo -e "\e[34mYou are using:$0 shell\e[0m"
+    echo -e "\e[35mPlease enter any argument along with the script name
             Namely: frontend\mongodb\nredis\nmysql\nrabbitMQ\ncart\ncatalogue\nshipping\npayment\nuser\e[0m"
-    echo -e "\e[34mFor all components user: all\e[0m"
+    echo -e "\e[36mFor all components user: all\e[0m"
 }
 
 case $1 in 
