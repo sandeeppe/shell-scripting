@@ -1,6 +1,15 @@
 #!/bin/bash
 frontend(){
     echo "Installing Frontend service"
+    sudo yum install nginx -y
+    case $? in 
+    0) 
+    echo "installation successful"
+    ;;
+    *)
+    echo "Plese try installing again"
+    ;;
+    esac
 }
 mongodb(){
     echo "Installing Mongodb service"
@@ -84,5 +93,5 @@ all)
     ;;
 *)
     usage
-    ;;
+     ;;
 esac
