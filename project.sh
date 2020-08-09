@@ -1,45 +1,65 @@
 #!/bin/bash
-frontend(){
-    echo "Installing Frontend service"
-    sudo yum install nginx -y
-    case $? in 
+
+head(){
+    echo -e "\t\t\t\e[1;2;3;4;33m$1\e[0m"
+}
+stat(){
+        
+    case $1 in 
     0) 
-    echo "installation successful"
+    echo "$2 successful"
     ;;
     *)
-    echo "Plese try installing again"
+    echo "$2 failed"
+    exit 1
     ;;
     esac
 }
+frontend(){
+    head "Installing Frontend service"
+    yum install nginx -y &>$LOG_FILE
+    stat $? "Nginx Install"
+    curl -s -L -o /tmp/frontend.zip "https://dev.azure.com/DevOps-Batches/98e5c57f-66c8-4828-acd6-66158ed6ee33/_apis/git/repositories/65042ce1-fdc2-4472-9aa2-3ae9b87c1ee4/items?path=%2F&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=zip&api-version=5.0&download=true"
+    stat $? "Download Frontend Files" &>>$LOG_FILE
+    cd /usr/share/nginx/html
+    rm -rf *
+    unzip /tmp/frontend.zip &>>$LOG_FILE
+    stat $? "Extract Fontend Files"
+    mv static/* .
+    rm -rf static README.md
+    mv localhost.conf /etc/nginx/nginx.conf
+    systemctl enable nginx &>>$LOG_FILE
+    systemctl start nginx &>>$LOG_FILE 
+}
 mongodb(){
-    echo "Installing Mongodb service"
+    head "Installing Mongodb service"
 }
 redis(){
-    echo "Installing Redis service"
+    head "Installing Redis service"
 }
 mysql(){
-    echo "Installing Mysql service"
+    head "Installing Mysql service"
 }
 rabbitMQ(){
-    echo "Installing RabbitMQ service"
+    head "Installing RabbitMQ service"
 }
 cart(){
-    echo "Installing Cart service"
+    head "Installing Cart service"
 }
 catalogue(){
-    echo "Installing catalogue service"
+    head "Installing catalogue service"
 }
 shipping(){
-    echo "Installing Shipping service"
+    head "Installing Shipping service"
 }
 payment(){
-    echo "Installing Payment service"
+    head "Installing Payment service"
 }
 user(){
-    echo "Installing User service"
+    head "Installing User service"
 }
 all(){
-    echo "Installing All service"
+    head "Installing All service"
 }
 usage(){
     echo -e "\e[34mYou are using:$0 shell\e[0m"
@@ -48,6 +68,15 @@ usage(){
     echo -e "\e[36mFor all components user: all\e[0m"
 }
 
+LOG_FILE=/tmp/roboshop.LOG_FILE
+rm -rf $LOG_FILE
+ID_USER=$(id -u)
+case $ID_USER in
+0) true ;;
+*) echo "script should be run as sudo or as a root user"
+   usage
+   ;;
+esac   
 case $1 in 
 frontend)
     frontend
