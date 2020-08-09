@@ -75,5 +75,4 @@ all)
     shipping
     payment
     user
-        
-    
+    ;;
