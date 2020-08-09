@@ -10,3 +10,4 @@ a=300
 sample
 echo a in sample programme = $a
 echo b in sample programme= $b
+echo a value of sample programme=$a
