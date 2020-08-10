@@ -62,6 +62,17 @@ redis(){
 }
 mysql(){
     head "Installing Mysql service"
+    curl -L -o /tmp/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar 
+    stat $? "Download Mysql Bundle\t "
+    cd /tmp
+    tar -xf mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar &>>$LOG_FILE
+    stat $? "Extract Mysql Bundle\t"
+    yum remove mariadb-libs -y &>>$LOG_FILE
+    yum install mysql-community-client-5.7.28-1.el7.x86_64.rpm mysql-community-common-5.7.28-1.el7.x86_64.rpm mysql-community-libs-5.7.28-1.el7.x86_64.rpm mysql-community-server-5.7.28-1.el7.x86_64.rpm -y &>>$LOG_FILE
+    stat $? "Installing Mysql DataBase\t"
+    systemctl enable mysqld &>>$LOG_FILE
+    systemctl start mysqld &>>$LOG_FILE
+    stat $? "Running Mysql server\t"
 }
 rabbitMQ(){
     head "Installing RabbitMQ service"
