@@ -42,8 +42,8 @@ mongodb(){
     gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc' >/etc/yum.repos.d/mongodb.repo
     yum install -y mongodb-org &>>$LOG_FILE 
     stat $? "Install mongodb server\t"
-    systemctl enable mongodb &>>$LOG_FILE
-    systemctl start mongodb &>>$LOG_FILE
+    systemctl enable mongod &>>$LOG_FILE
+    systemctl start mongod &>>$LOG_FILE
     stat $? "start MongoDB service\t"
 
     cd/tmp
