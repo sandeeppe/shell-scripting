@@ -54,7 +54,7 @@ gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc' >/etc/yum.repos.d/mong
     mongo < catalogue.js &>>$LOG_FILE
     stat $? "Loading Catalogue Schema\t"
     mongo < user.js &>>$LOG_FILE
-    stat $? "Loading Catalogue Schema\t"
+    stat $? "Loading user Schema\t"
 
 }
 redis(){
