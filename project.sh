@@ -53,7 +53,7 @@ gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc' >/etc/yum.repos.d/mong
     stat $? "Extracting MongoDB \t"
     mongo < catalogue.js &>>$LOG_FILE
     stat $? "Loading Catalogue Schema\t"
-    mongo < user.js &>>$LOG_FILE
+    mongo < users.js &>>$LOG_FILE
     stat $? "Loading user Schema\t"
 
 }
