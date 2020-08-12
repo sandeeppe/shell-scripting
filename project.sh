@@ -59,9 +59,18 @@ gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc' >/etc/yum.repos.d/mong
 }
 redis(){
     head "Installing Redis service"
+    yum install epel-release yum-utils http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y &>>$LOG_FILE
+    stat $? "Install yum-utils\t"
+    yum-config-manager --enable remi &>>$LOG_FILE
+    yum install redis -y &>>$LOG_FILE
+    stat $? "Install redis service\t"
+
+    systemctl enable redis &>>$LOG_FILE
+    systemctl start redis &>>$LOG_FILE
+    stat $? "start redis service\t"
 }
 MYSQL(){
-   Head "Installing MySQL Service\t"
+   head "Installing MySQL Service\t"
   yum list installed | grep mysql-community-server &>/dev/null 
   if [ $? -ne 0 ]; then 
     curl -L -o /tmp/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar &>>$LOG_FILE
