@@ -91,7 +91,7 @@ MYSQL(){
     echo -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyRootPass@1';\nuninstall plugin validate_password;\nALTER USER 'root'@'localhost' IDENTIFIED BY 'password';" >/tmp/remove-plugin.sql 
     
      
-    mysql --defaults-extra-file=/root/.mysql-default --connect-expired-password </tmp/remove-plugin.sql  &>>$LOG_FILE
+    mysql --defaults-extra-file=/root/.mysql-default --connect-expired-password </tmp/remove-plugin.sql  #&>>$LOG_FILE
     Stat $? "Reset MySQL Password\t"
   
     exit 0
