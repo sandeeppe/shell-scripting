@@ -57,7 +57,7 @@ gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc' >/etc/yum.repos.d/mong
     stat $? "Loading user Schema\t"
 
 }
-redis(){
+REDIS(){
     head "Installing Redis service"
     yum install epel-release yum-utils http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y &>>$LOG_FILE
     stat $? "Install yum-utils\t"
