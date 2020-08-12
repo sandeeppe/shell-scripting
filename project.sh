@@ -71,7 +71,7 @@ REDIS(){
 }
 MYSQL(){
    head "Installing MySQL Service\t"
-  yum list installed | grep mysql-community-server &>/dev/null 
+   yum list installed | grep mysql-community-server &>/dev/null 
   if [ $? -ne 0 ]; then 
     curl -L -o /tmp/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar &>>$LOG_FILE
     Stat $? "Download MySQL Bundle\t"
@@ -112,8 +112,11 @@ MYSQL(){
 }
 RABBITMQ(){
     head "Installing RabbitMQ service"
-    yum install https://packages.erlang-solutions.com/erlang/rpm/centos/7/x86_64/esl-erlang_22.2.1-1~centos~7_amd64.rpm -y &>>$LOG_FILE
-    stat $? "Install erland \t"
+    yum list install | grep esl-erlang >/dev/null
+    if [ $? -ne 0]; then
+        yum install https://packages.erlang-solutions.com/erlang/rpm/centos/7/x86_64/esl-erlang_22.2.1-1~centos~7_amd64.rpm -y &>>$LOG_FILE
+        stat $? "Install erland \t"
+    fi
     curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | sudo bash &>>$LOG_FILE
     stat $? "Install rabbitMQ Repos \t"
     yum install rabbitmq-server -y &>>$LOG_FILE
