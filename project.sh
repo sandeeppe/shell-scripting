@@ -63,44 +63,38 @@ redis(){
 MYSQL(){
     head "Installing Mysql service"
     yum list installed | grep mysql-community-server &>/dev/null 
-    if [ $? -ne 0 ]; then
-        curl -L -o /tmp/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar &>>$LOG_FILE
-        stat $? "Download Mysql Bundle\t "
-        cd /tmp
-        tar -xf mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar &>>$LOG_FILE
-        stat $? "Extract Mysql Bundle\t"
+    case $? in
+    0)
+      true
+      ;;
+    *)
+      curl -L -o /tmp/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar &>>$LOG_FILE
+      stat $? "Download Mysql Bundle\t "
+      cd /tmp
+      tar -xf mysql-5.7.28-1.el7.x86_64.rpm-bundle.tar 
+      stat $? "Extract Mysql Bundle\t"
 
-        yum remove mariadb-libs -y &>>$LOG_FILE
-        yum install mysql-community-client-5.7.28-1.el7.x86_64.rpm mysql-community-common-5.7.28-1.el7.x86_64.rpm mysql-community-libs-5.7.28-1.el7.x86_64.rpm mysql-community-server-5.7.28-1.el7.x86_64.rpm -y &>>$LOG_FILE
-        stat $? "Installing Mysql DataBase\t"
-    fi
+      yum remove mariadb-libs -y &>>$LOG_FILE
+      yum install mysql-community-client-5.7.28-1.el7.x86_64.rpm mysql-community-common-5.7.28-1.el7.x86_64.rpm mysql-community-libs-5.7.28-1.el7.x86_64.rpm mysql-community-server-5.7.28-1.el7.x86_64.rpm -y &>>$LOG_FILE
+      stat $? "Installing Mysql DataBase\t"
+      ;;
+    esac
 
     systemctl enable mysqld &>>$LOG_FILE
     systemctl start mysqld &>>$LOG_FILE
     stat $? "start Mysql server\t"
     sleep 20
     DEFAULT_PASSWORD=$(cat /var/log/mysqld.log | grep 'A temporary password' | awk '{print $NF}')
+    echo $DEFAULT_PASSWORD
     echo -e "[client]\nuser=root\npassword=$DEFAULT_PASSWORD" >/root/.mysql-default
 
     echo -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyRootPass@1';\nuninstall plugin validate_password;\nALTER USER 'root'@'localhost' IDENTIFIED BY 'password';" >/tmp/remove-plugin.sql 
-    echo "show databases;" |mysql -uroot -ppassword &>/dev/null
+    
      
-    if [ $? -ne 0 ]; then
-        mysql --defaults-extra-file=/root/.mysql-default --connect-expired-password </tmp/remove-plugin.sql  &>>$LOG_FILE
-        Stat $? "Reset MySQL Password\t"
-    fi
+    mysql --defaults-extra-file=/root/.mysql-default --connect-expired-password </tmp/remove-plugin.sql  &>>$LOG_FILE
+    Stat $? "Reset MySQL Password\t"
   
-  
-    curl -s -L -o /tmp/mysql.zip "https://dev.azure.com/DevOps-Batches/98e5c57f-66c8-4828-acd6-66158ed6ee33/_apis/git/repositories/0a5a6ec5-35c7-4939-8ace-7c274f080347/items?path=%2F&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=zip&api-version=5.0&download=true" &>>$LOG_FILE
-    Stat $? "Download MySQL Schema\t"
-
-    cd /tmp
-    unzip -o /tmp/mysql.zip &>>$LOG_FILE
-    Stat $? "Extract MySQL Schema\t"
-
-    mysql -uroot -ppassword <shipping.sql &>>$LOG_FILE
-    mysql -uroot -ppassword <ratings.sql &>>$LOG_FILE
-    Stat $? "Load Schema to MySQL\t"
+    exit 0
 }
 RABBITMQ(){
     head "Installing RabbitMQ service"
