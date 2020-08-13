@@ -165,6 +165,7 @@ Description = $1 Service File
 After = network.target
 
 [Service]
+User=$APP_USER
 WorkingDirectory=/home/$APP_USER/$1
 ExecStart = $2
 
@@ -173,6 +174,7 @@ WantedBy = multi-user.target" >/etc/systemd/system/$1.service
     systemctl daemon-reload
     systemctl enable $1 &>>$LOG_FILE
     systemctl restart $1
+    stat $? "start $1 service"
 }
 CART(){
     head "Installing Cart service"
@@ -188,11 +190,25 @@ CATALOGUE(){
 }
 SHIPPING(){
     head "Installing Shipping service"
-    NODEJS_SETUP 
+    yum install maven -y &>>$LOG_FILE
+    stat $? "Install Maven\t\t\t"
+    curl -s -L -o /tmp/shipping.zip "https://dev.azure.com/DevOps-Batches/98e5c57f-66c8-4828-acd6-66158ed6ee33/_apis/git/repositories/1d2e4e95-b279-4545-a344-f9064f2dc89f/items?path=%2F&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=zip&api-version=5.0&download=true" &>>$LOG_FILE
+    stat $? "Download Application Archive\t"
+
+    mkdir -p /home/$APP_USER/shipping
+    cd /home/$APP_USER/shipping
+    unzip -o /tmp/shipping.zip &>>$LOG_FILE
+    stat $? "Extract Application Archive\t"
+    mvn clean package &>>$LOG_FILE
+    stat $? "Install MAven Dependencies\t"
+    mv target/*dependencies.jar shipping.jar
+
+    SETUP_PERMISSIONS
+    SETUP_SERVICE shipping "/bin/java -jar shipping.jar" 
 }
 PAYMENT(){
     head "Installing Payment service"
-}
+} 
 USER(){
     head "Installing User service"
     NODEJS_SETUP user "https://dev.azure.com/DevOps-Batches/98e5c57f-66c8-4828-acd6-66158ed6ee33/_apis/git/repositories/713e8842-5bdd-4c10-bc8e-f0c9a80d5efa/items?path=%2F&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=zip&api-version=5.0&download=true"
