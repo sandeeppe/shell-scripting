@@ -126,8 +126,57 @@ RABBITMQ(){
     systemctl start rabbitmq-server &>>$LOG_FILE
     stat $? "Start rabbitMQ service \t"
 } 
+
+NODEJS_SETUP(){
+    yum install nodejs gcc-c++ -y
+}
+
+APP_USER_SETUP(){
+    id $APP_USER &>/dev/null
+    if [ $? -ne 0 ]; then
+
+     useradd $APP_USER
+    fi 
+}
+
+SETUP_PERMISSIONS(){
+    chown $APP_USER:$APP_USER /home/$APP_USER -R
+}
+
+SETUP_SERVICE(){
+    echo "[Unit]
+Description = $1 Service File
+After = network.target
+
+[Service]
+WorkingDirectory=/home/$APP_USER/$1
+ExecStart = $2
+
+[Install]
+WantedBy = multi-user.target" >/etc/systemd/system/$1.service
+    systemctl daemon-reload
+    systemctl enable $1 &>>$LOG_FILE
+    systemctl restart $1
+}
 CART(){
     head "Installing Cart service"
+    NODEJS_SETUP
+    stat $? "Install NodeJs\t"
+    APP_USER_SETUP
+    stat $? "Setup App User\t"
+
+    curl -s -L -o /tmp/cart.zip "https://dev.azure.com/DevOps-Batches/98e5c57f-66c8-4828-acd6-66158ed6ee33/_apis/git/repositories/5ad6ea2d-d96c-4947-be94-9e0c84fc60c1/items?path=%2F&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=zip&api-version=5.0&download=true" &>>$LOG_FILE
+    stat $? "Download Application Archive\t"
+
+    mkdir -p /home/roboshop/cart
+    cd /home /roboshop/cart
+    unzip -o /tmp/cart.zip &>>$LOG_FILE
+    stat $? "Extract application archive\t"
+    npm install &>>$LOG_FILE
+    stat $? " Install NodeJs Dependencies \t"
+
+    SETUP_PERMISSIONS
+    SETUP_SERVICE cart "/bin/node cart.js"
 }
 CATALOGUE(){
     head "Installing catalogue service"
@@ -151,8 +200,12 @@ usage(){
     echo -e "\e[36mFor all components user: all\e[0m"
 }
 
-LOG_FILE=/tmp/roboshop.LOG_FILE
+# Main programme
+LOG_FILE=/tmp/roboshop.log
 rm -rf $LOG_FILE
+APP_USER=roboshop
+
+# check root user or not
 ID_USER=$(id -u)
 case $ID_USER in
 0) true ;;
