@@ -129,7 +129,7 @@ RABBITMQ(){
 
 NODEJS_SETUP(){
     APP_NAME=$1
-    yum install nodejs gcc-c++ -y
+    yum install nodejs gcc-c++ -y &>>$LOG_FILE
     stat $? "Install NodeJs\t"
     APP_USER_SETUP
     stat $? "Setup App User\t"
@@ -188,12 +188,14 @@ CATALOGUE(){
 }
 SHIPPING(){
     head "Installing Shipping service"
+    NODEJS_SETUP 
 }
 PAYMENT(){
     head "Installing Payment service"
 }
 USER(){
     head "Installing User service"
+    NODEJS_SETUP user "https://dev.azure.com/DevOps-Batches/98e5c57f-66c8-4828-acd6-66158ed6ee33/_apis/git/repositories/713e8842-5bdd-4c10-bc8e-f0c9a80d5efa/items?path=%2F&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=zip&api-version=5.0&download=true"
 }
 all(){
     head "Installing All service"
