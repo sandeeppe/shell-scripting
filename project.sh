@@ -128,7 +128,23 @@ RABBITMQ(){
 } 
 
 NODEJS_SETUP(){
+    APP_NAME=$1
     yum install nodejs gcc-c++ -y
+    stat $? "Install NodeJs\t"
+    APP_USER_SETUP
+    stat $? "Setup App User\t"
+    curl -s -L -o /tmp/$APP_NAME.zip "$2" &>>$LOG_FILE
+    stat $? "Download Application Archive\t"
+
+    mkdir -p /home/roboshop/$APP_NAME
+    cd /home /roboshop/$APP_NAME
+    unzip -o /tmp/cart.zip &>>$LOG_FILE
+    stat $? "Extract application archive\t"
+    npm install &>>$LOG_FILE
+    stat $? " Install NodeJs Dependencies \t"
+
+    SETUP_PERMISSIONS
+    SETUP_SERVICE $APP_NAME "/bin/node $APP_NAME.js"
 }
 
 APP_USER_SETUP(){
@@ -160,26 +176,15 @@ WantedBy = multi-user.target" >/etc/systemd/system/$1.service
 }
 CART(){
     head "Installing Cart service"
-    NODEJS_SETUP
-    stat $? "Install NodeJs\t"
-    APP_USER_SETUP
-    stat $? "Setup App User\t"
+    NODEJS_SETUP cart "https://dev.azure.com/DevOps-Batches/98e5c57f-66c8-4828-acd6-66158ed6ee33/_apis/git/repositories/5ad6ea2d-d96c-4947-be94-9e0c84fc60c1/items?path=%2F&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=zip&api-version=5.0&download=true"
 
-    curl -s -L -o /tmp/cart.zip "https://dev.azure.com/DevOps-Batches/98e5c57f-66c8-4828-acd6-66158ed6ee33/_apis/git/repositories/5ad6ea2d-d96c-4947-be94-9e0c84fc60c1/items?path=%2F&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=zip&api-version=5.0&download=true" &>>$LOG_FILE
-    stat $? "Download Application Archive\t"
+    
 
-    mkdir -p /home/roboshop/cart
-    cd /home /roboshop/cart
-    unzip -o /tmp/cart.zip &>>$LOG_FILE
-    stat $? "Extract application archive\t"
-    npm install &>>$LOG_FILE
-    stat $? " Install NodeJs Dependencies \t"
-
-    SETUP_PERMISSIONS
-    SETUP_SERVICE cart "/bin/node cart.js"
+    
 }
 CATALOGUE(){
     head "Installing catalogue service"
+    NODEJS_SETUP catalogue "https://dev.azure.com/DevOps-Batches/98e5c57f-66c8-4828-acd6-66158ed6ee33/_apis/git/repositories/73bf0c1f-1ba6-49fa-ae4e-e1d6df20786f/items?path=%2F&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=zip&api-version=5.0&download=true"
 }
 SHIPPING(){
     head "Installing Shipping service"
