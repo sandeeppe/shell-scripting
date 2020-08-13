@@ -174,7 +174,7 @@ WantedBy = multi-user.target" >/etc/systemd/system/$1.service
     systemctl daemon-reload
     systemctl enable $1 &>>$LOG_FILE
     systemctl restart $1
-    stat $? "start $1 service"
+    stat $? "start $1 service\t"
 }
 CART(){
     head "Installing Cart service"
@@ -208,6 +208,19 @@ SHIPPING(){
 }
 PAYMENT(){
     head "Installing Payment service"
+    yum install python36 gcc python3-devel -y &>>$LOG_FILE
+    stat $? "Install python3\t"
+    APP_USER_SETUP
+    mkdir -p /home/$APP_USER/payment
+    cd /home/$APP_USER/payment
+    curl -L -s -o /tmp/payment.zip "https://dev.azure.com/DevOps-Batches/98e5c57f-66c8-4828-acd6-66158ed6ee33/_apis/git/repositories/1a920b55-9858-4b25-872b-1aeeb1ababa7/items?path=%2F&versionDescriptor%5BversionOptions%5D=0&versionDescriptor%5BversionType%5D=0&versionDescriptor%5Bversion%5D=master&resolveLfs=true&%24format=zip&api-version=5.0&download=true" &>>$LOG_FILE
+    stat $? "Download Application Arcive\t"
+
+    unzip -o /tmp/payment.zip &>>$LOG_FILE
+    stat $? "Extract Application Archive\t"
+
+    pip3 install -r requirements.txt &>>$LOG_FILE
+    stat $? "Install Python Dependencies\t"
 } 
 USER(){
     head "Installing User service"
