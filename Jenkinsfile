@@ -18,6 +18,11 @@ pipeline {
                         echo bye'''
             }
         }
+        stage('Archive') {
+            steps {
+                sh ' tar -czf cart.tgz node_modules cart.js package.json'
+            }   
+        }    
     }
     
 }
